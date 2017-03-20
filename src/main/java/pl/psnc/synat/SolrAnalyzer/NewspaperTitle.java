@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Describes single title instance (taken from Solr)
- *
+ * <p>
  * Created by pwozniak on 3/17/17.
  */
 public class NewspaperTitle {
@@ -44,9 +44,17 @@ public class NewspaperTitle {
 	public String algoryth_2() {
 		String result = "";
 		for (int i = 0; i <= firstNonSuspiciousPairPosition; i++) {
-			result += getParts().get(i).getValue();
-			if (i < firstNonSuspiciousPairPosition)
+			if (i < firstNonSuspiciousPairPosition) {
+				result += getParts().get(i).getValue();
 				result += " ";
+			} else {
+				if (!isBannedWord(getParts().get(i).getValue())) {
+					result += getParts().get(i).getValue();
+					result += " ";
+				}
+				result = result.substring(0, result.length() - 1);
+			}
+
 		}
 		return result;
 	}
@@ -98,5 +106,19 @@ public class NewspaperTitle {
 			System.out.println("Null");
 		}
 		return title.substring(0, title.length() - 1);
+	}
+
+	private boolean isBannedWord(String word) {
+		if (word.equals("R."))
+			return true;
+		else if (word.equals("No."))
+			return true;
+		else if (word.equals("Nr."))
+			return true;
+		else if (word.equals("Vol."))
+			return true;
+		else
+			return false;
+
 	}
 }

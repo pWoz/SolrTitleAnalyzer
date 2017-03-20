@@ -7,11 +7,13 @@ public class NewspaperTitlePart {
 
 	private String value;
 	private int numberOfDigits;
+	private int numberOfNonWordCharacters;
 
 
 	public NewspaperTitlePart(String value) {
 		this.value = value;
 		this.numberOfDigits = value.replaceAll("\\D", "").length();
+		this.numberOfNonWordCharacters = value.replaceAll("\\w","").length();
 	}
 
 	public String getValue() {
@@ -19,6 +21,9 @@ public class NewspaperTitlePart {
 	}
 
 	public boolean isSuspected() {
+		if (value.length() == 1 && numberOfNonWordCharacters > 0) {
+			return true;
+		}
 		if (value.length() < 2) {
 			return numberOfDigits > value.length() / 2;
 		} else {
