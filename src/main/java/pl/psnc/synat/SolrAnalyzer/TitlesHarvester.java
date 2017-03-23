@@ -6,12 +6,12 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 /**
  * Harvest titles for all newspapers ( tech_type:czasopismo) from FBC solr
+ * Solr url has to be specified
  * <p>
  *
  * Created by pwozniak on 3/14/17.
@@ -41,7 +41,7 @@ public class TitlesHarvester {
 			SolrDocumentList list = response.getResults();
 			analyzer.writeResultsToFile(list);
 
-			if (list.size() == 0) {
+			if (list.isEmpty()) {
 				done = true;
 			} else {
 				start = start + rows;
