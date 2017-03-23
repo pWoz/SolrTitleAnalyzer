@@ -8,12 +8,14 @@ public class NewspaperTitlePart {
 	private String value;
 	private int numberOfDigits;
 	private int numberOfNonWordCharacters;
+	private int numberOfWordCharacters;
 
 
 	public NewspaperTitlePart(String value) {
 		this.value = value;
 		this.numberOfDigits = value.replaceAll("\\D", "").length();
 		this.numberOfNonWordCharacters = value.replaceAll("\\w","").length();
+		this.numberOfWordCharacters = value.replaceAll("\\W", "").length();
 	}
 
 	public String getValue() {

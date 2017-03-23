@@ -6,6 +6,12 @@ import java.util.List;
 
 /**
  * Describes single title instance (taken from Solr)
+ *
+ * Algoryth of extracting proper title from 'originalTitle':
+ * 1. Original title is split on spaces and every item is marked as suspicious (or not). What suspicious means will be later.
+ * 2. We are scanning original title from the last word and searching for pair of non suspicious words. This value is stored in 'firstNonSuspiciousPairPosition'
+ * 3. The output title is the concatenation of all words from original title from beggining to 'firstNonSuspiciousPairPosition'.
+ *
  * <p>
  * Created by pwozniak on 3/17/17.
  */
@@ -19,11 +25,11 @@ public class NewspaperTitle {
 	public NewspaperTitle(String value) {
 		originalTitle = removeFirstSign(removeLastSign(value));
 		splitTitle = splitTitle(originalTitle);
-		firstSuspiciousPosition = findFirstSuspitiousPosition();
+		firstSuspiciousPosition = findFirstSuspiciousPosition();
 		firstNonSuspiciousPairPosition = findFirstNonSuspiciousPairPosition();
 	}
 
-	private List<NewspaperTitlePart> getParts() {
+	public List<NewspaperTitlePart> getParts() {
 		return splitTitle;
 	}
 
@@ -31,32 +37,40 @@ public class NewspaperTitle {
 		return originalTitle;
 	}
 
-	public String algoryth_1() {
-		String result = "";
-		for (int i = 0; i <= firstSuspiciousPosition; i++) {
-			result += splitTitle.get(i).getValue();
-			if (i != findFirstSuspitiousPosition())
-				result += " ";
+	/**
+	 * Extracts title (without dates) from original title
+	 *
+	 * @return title without dates and issue numbers;
+	 */
+	public String findTitle() {
+		StringBuilder result = new StringBuilder("");
+		if (firstSuspiciousPosition < 1) {
+			result.append(getOriginalTitle());
+			return result.toString();
 		}
-		return result;
-	}
 
-	public String algoryth_2() {
-		String result = "";
+		if(firstNonSuspiciousPairPosition == -1){
+			if (firstSuspiciousPosition == 1) {
+				result.append(getParts().get(0).getValue());
+			}else{
+				result.append(getOriginalTitle());
+			}
+		}
+
 		for (int i = 0; i <= firstNonSuspiciousPairPosition; i++) {
 			if (i < firstNonSuspiciousPairPosition) {
-				result += getParts().get(i).getValue();
-				result += " ";
+				result.append(getParts().get(i).getValue());
+				result.append(" ");
 			} else {
 				if (!isBannedWord(getParts().get(i).getValue())) {
-					result += getParts().get(i).getValue();
-					result += " ";
+					result.append(getParts().get(i).getValue());
+					result.append(" ");
 				}
-				result = result.substring(0, result.length() - 1);
+				result = new StringBuilder(result.substring(0, result.length() - 1));
 			}
 
 		}
-		return result;
+		return result.toString();
 	}
 
 	private List<NewspaperTitlePart> splitTitle(String title) {
@@ -69,7 +83,7 @@ public class NewspaperTitle {
 		return result;
 	}
 
-	private int findFirstSuspitiousPosition() {
+	private int findFirstSuspiciousPosition() {
 		int counter = -1;
 		for (NewspaperTitlePart part : splitTitle) {
 			counter++;
@@ -77,7 +91,7 @@ public class NewspaperTitle {
 				return counter;
 			}
 		}
-		return counter;
+		return -1;
 	}
 
 	private int findFirstNonSuspiciousPairPosition() {
@@ -85,7 +99,11 @@ public class NewspaperTitle {
 		for (int i = splitTitle.size() - 1; i >= 0; i--) {
 			if (!splitTitle.get(i).isSuspected()) {
 				if (nonSuspiciousWordFound) {
-					return i + 1;
+					if (i == splitTitle.size() - 2) {
+						nonSuspiciousWordFound = false;
+					} else {
+						return i + 1;
+					}
 				} else {
 					nonSuspiciousWordFound = true;
 				}
@@ -109,16 +127,17 @@ public class NewspaperTitle {
 	}
 
 	private boolean isBannedWord(String word) {
-		if (word.equals("R."))
-			return true;
-		else if (word.equals("No."))
-			return true;
-		else if (word.equals("Nr."))
-			return true;
-		else if (word.equals("Vol."))
+		if ("R.".equalsIgnoreCase(word) ||
+				"[R.".equalsIgnoreCase(word) ||
+				"No.".equalsIgnoreCase(word) ||
+				"Nr.".equalsIgnoreCase(word) ||
+				"nr".equalsIgnoreCase(word) ||
+				"Vol.".equalsIgnoreCase(word) ||
+				"Jg.".equalsIgnoreCase(word) ||
+				"T.".equalsIgnoreCase(word)
+				)
 			return true;
 		else
 			return false;
-
 	}
 }

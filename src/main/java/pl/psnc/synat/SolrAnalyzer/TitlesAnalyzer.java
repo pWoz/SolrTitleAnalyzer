@@ -55,9 +55,9 @@ public class TitlesAnalyzer {
 		fileWriter.write(System.lineSeparator());
 		fileWriter.write(newspaperTitle.getOriginalTitle());
 		fileWriter.write(System.lineSeparator());
-		fileWriter.write(newspaperTitle.algoryth_1());
-		fileWriter.write(System.lineSeparator());
-		fileWriter.write(newspaperTitle.algoryth_2());
+//		fileWriter.write(newspaperTitle.algoryth1());
+//		fileWriter.write(System.lineSeparator());
+		fileWriter.write(newspaperTitle.findTitle());
 		fileWriter.write(System.lineSeparator());
 		fileWriter.write("--------------");
 		fileWriter.write(System.lineSeparator());
