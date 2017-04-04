@@ -21,48 +21,48 @@ import java.util.Iterator;
  */
 public class SolrTitlesDownloader {
 
-	private static Logger LOG = LogManager.getLogger(SolrTitlesDownloader.class);
+    private static Logger LOG = LogManager.getLogger(SolrTitlesDownloader.class);
 
-	private String url;
-	private SolrClient solrClient;
-	private FileWriter fileWriter;
+    private String url;
+    private SolrClient solrClient;
+    private FileWriter fileWriter;
 
-	SolrTitlesDownloader(String url) throws IOException {
-		this.url = url;
-		solrClient = new HttpSolrClient.Builder(this.url).build();
-		fileWriter = new FileWriter("results_1.csv");
-	}
+    SolrTitlesDownloader(String url) throws IOException {
+        this.url = url;
+        solrClient = new HttpSolrClient.Builder(this.url).build();
+        fileWriter = new FileWriter("results_1.csv");
+    }
 
-	public SolrQuery buildQuery() {
-		LOG.debug("Building query");
-		SolrQuery query = new SolrQuery();
-		query.setQuery("*:*");
-		query.setFields("id", "dc_title");
-		query.addFilterQuery("tech_type:czasopismo");
-		LOG.debug("Query created: " + query);
-		return query;
-	}
+    public SolrQuery buildQuery() {
+        LOG.debug("Building query");
+        SolrQuery query = new SolrQuery();
+        query.setQuery("*:*");
+        query.setFields("id", "dc_title");
+        query.addFilterQuery("tech_type:czasopismo");
+        LOG.debug("Query created: " + query);
+        return query;
+    }
 
-	public QueryResponse executeQuery(SolrQuery query) throws IOException, SolrServerException {
-		LOG.debug("Executing query");
-		return solrClient.query(query);
-	}
+    public QueryResponse executeQuery(SolrQuery query) throws IOException, SolrServerException {
+        LOG.debug("Executing query");
+        return solrClient.query(query);
+    }
 
-	public void writeResultsToFile(SolrDocumentList results) throws IOException {
-		LOG.debug("Writing results to file");
-		for (SolrDocument doc : results) {
-			fileWriter.write(doc.get("id").toString());
-			fileWriter.write(",");
-			if (doc.get("dc_title") != null) {
-				fileWriter.write(doc.get("dc_title").toString());
-			} else {
-				fileWriter.write("NULL");
-			}
-			fileWriter.write(System.lineSeparator());
-		}
-	}
+    public void writeResultsToFile(SolrDocumentList results) throws IOException {
+        LOG.debug("Writing results to file");
+        for (SolrDocument doc : results) {
+            fileWriter.write(doc.get("id").toString());
+            fileWriter.write(",");
+            if (doc.get("dc_title") != null) {
+                fileWriter.write(doc.get("dc_title").toString());
+            } else {
+                fileWriter.write("NULL");
+            }
+            fileWriter.write(System.lineSeparator());
+        }
+    }
 
-	public void closeFile() throws IOException {
-		fileWriter.close();
-	}
+    public void closeFile() throws IOException {
+        fileWriter.close();
+    }
 }

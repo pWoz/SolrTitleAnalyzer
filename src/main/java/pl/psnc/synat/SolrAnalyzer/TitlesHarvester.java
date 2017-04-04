@@ -18,36 +18,36 @@ import java.io.IOException;
  */
 public class TitlesHarvester {
 
-	private static Logger LOG = LogManager.getLogger(TitlesHarvester.class);
+    private static Logger LOG = LogManager.getLogger(TitlesHarvester.class);
 
-	public static void main(String[] args) throws IOException, SolrServerException {
+    public static void main(String[] args) throws IOException, SolrServerException {
 
-		String url = "xyz";
+        String url = "xyz";
 
-		SolrTitlesDownloader analyzer = new SolrTitlesDownloader(url);
+        SolrTitlesDownloader analyzer = new SolrTitlesDownloader(url);
 
-		SolrQuery query = analyzer.buildQuery();
+        SolrQuery query = analyzer.buildQuery();
 
-		boolean done = false;
-		int start = 0;
-		int rows = 100;
+        boolean done = false;
+        int start = 0;
+        int rows = 100;
 
-		while (!done) {
-			LOG.info("Reading: " + start + ":" + rows);
-			query.setStart(start);
-			query.setRows(rows);
-			QueryResponse response = analyzer.executeQuery(query);
+        while (!done) {
+            LOG.info("Reading: " + start + ":" + rows);
+            query.setStart(start);
+            query.setRows(rows);
+            QueryResponse response = analyzer.executeQuery(query);
 
-			SolrDocumentList list = response.getResults();
-			analyzer.writeResultsToFile(list);
+            SolrDocumentList list = response.getResults();
+            analyzer.writeResultsToFile(list);
 
-			if (list.isEmpty()) {
-				done = true;
-			} else {
-				start = start + rows;
-			}
+            if (list.isEmpty()) {
+                done = true;
+            } else {
+                start = start + rows;
+            }
 
-		}
-		analyzer.closeFile();
-	}
+        }
+        analyzer.closeFile();
+    }
 }
